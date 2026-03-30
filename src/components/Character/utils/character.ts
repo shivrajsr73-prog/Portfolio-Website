@@ -45,10 +45,6 @@ function applySoftColorStyle(character: THREE.Object3D) {
       return;
     }
 
-    const worldPos = new THREE.Vector3();
-    mesh.getWorldPosition(worldPos);
-    const yNorm = (worldPos.y - minY) / totalH;
-
     const meshBox = new THREE.Box3().setFromObject(mesh);
     const meshCenterY = (meshBox.min.y + meshBox.max.y) / 2;
     const meshCenterNorm = (meshCenterY - minY) / totalH;
@@ -181,88 +177,6 @@ function applyTeethVisiblePose(character: THREE.Object3D) {
       });
     }
   });
-}
-
-function addCapToCharacter(character: THREE.Object3D) {
-  if (character.getObjectByName("customCapGroup")) return;
-
-  let headMesh: THREE.Mesh | null = null;
-  character.traverse((obj) => {
-    const mesh = obj as THREE.Mesh;
-    if (!mesh.isMesh || headMesh) return;
-    const n = mesh.name.toLowerCase();
-    if (n.includes("head") || n.includes("face")) {
-      headMesh = mesh;
-    }
-  });
-
-  const headBox = new THREE.Box3();
-  if (headMesh) {
-    headBox.setFromObject(headMesh);
-  } else {
-    headBox.setFromObject(character);
-  }
-  const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  headBox.getSize(size);
-  headBox.getCenter(center);
-
-  // Clamp keeps cap from exploding in case head mesh detection is off.
-  const capRadiusRaw = Math.max(size.x, size.z) * 0.56;
-  const capRadius = THREE.MathUtils.clamp(capRadiusRaw, 1.0, 2.4);
-  const capHeight = THREE.MathUtils.clamp(
-    Math.max(size.y * 0.33, capRadius * 0.42),
-    0.6,
-    1.4
-  );
-
-  const capGroup = new THREE.Group();
-  capGroup.name = "customCapGroup";
-
-  const capMat = new THREE.MeshStandardMaterial({
-    color: "#d8d8dc",
-    roughness: 0.58,
-    metalness: 0.05,
-  });
-  const visorMat = new THREE.MeshStandardMaterial({
-    color: "#121318",
-    roughness: 0.5,
-    metalness: 0.08,
-  });
-
-  const dome = new THREE.Mesh(
-    new THREE.SphereGeometry(capRadius, 28, 20, 0, Math.PI * 2, 0, Math.PI / 2.1),
-    capMat
-  );
-  dome.scale.y = 0.9;
-  dome.position.y = capHeight * 0.5;
-  capGroup.add(dome);
-
-  const visor = new THREE.Mesh(
-    new THREE.CylinderGeometry(capRadius * 0.82, capRadius * 0.9, capHeight * 0.12, 32),
-    visorMat
-  );
-  visor.rotation.x = Math.PI / 2;
-  visor.scale.set(1.08, 1, 0.46);
-  visor.position.set(0, capHeight * 0.02, capRadius * 0.5);
-  capGroup.add(visor);
-
-  const button = new THREE.Mesh(
-    new THREE.SphereGeometry(capRadius * 0.08, 16, 12),
-    capMat
-  );
-  button.position.y = capHeight * 0.95;
-  capGroup.add(button);
-
-  const worldCapPos = new THREE.Vector3(
-    center.x,
-    center.y + size.y * 0.36,
-    center.z + size.z * 0.02
-  );
-  const localCapPos = character.worldToLocal(worldCapPos.clone());
-  capGroup.position.copy(localCapPos);
-
-  character.add(capGroup);
 }
 
 const setCharacter = (
