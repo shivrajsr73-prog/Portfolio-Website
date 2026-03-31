@@ -96,7 +96,7 @@ const textures = [
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
 const spheres = [...Array(30)].map(() => ({
-  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+  scale: [1.25, 1.45, 1.6, 1.35, 1.5][Math.floor(Math.random() * 5)],
 }));
 
 type SphereProps = {
@@ -118,15 +118,15 @@ function SphereGeo({
 
   useFrame((_state, delta) => {
     if (!isActive) return;
-    delta = Math.min(0.1, delta);
+    delta = Math.min(0.08, delta);
     const impulse = vec
       .copy(api.current!.translation())
       .normalize()
       .multiply(
         new THREE.Vector3(
-          -50 * delta * scale,
-          -150 * delta * scale,
-          -50 * delta * scale
+          -110 * delta * scale,
+          -240 * delta * scale,
+          -110 * delta * scale
         )
       );
 
@@ -135,10 +135,10 @@ function SphereGeo({
 
   return (
     <RigidBody
-      linearDamping={0.75}
-      angularDamping={0.15}
+      linearDamping={0.45}
+      angularDamping={0.08}
       friction={0.2}
-      position={[r(20), r(20) - 25, r(20) - 10]}
+      position={[r(12), r(8) - 8, r(10) - 6]}
       ref={api}
       colliders={false}
     >
@@ -176,7 +176,7 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
         (pointer.y * viewport.height) / 2,
         0
       ),
-      0.2
+      0.45
     );
     ref.current?.setNextKinematicTranslation(targetVec);
   });
@@ -188,7 +188,7 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
       colliders={false}
       ref={ref}
     >
-      <BallCollider args={[2]} />
+      <BallCollider args={[3.2]} />
     </RigidBody>
   );
 }
@@ -242,7 +242,7 @@ const TechStack = () => {
       <Canvas
         shadows
         gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
-        camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
+        camera={{ position: [0, -1.5, 15], fov: 36, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
         className="tech-canvas"
       >
