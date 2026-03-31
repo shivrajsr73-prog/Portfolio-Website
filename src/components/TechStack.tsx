@@ -96,7 +96,7 @@ const textures = [
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
 const spheres = [...Array(30)].map(() => ({
-  scale: [1.25, 1.45, 1.6, 1.35, 1.5][Math.floor(Math.random() * 5)],
+  scale: [0.95, 1.05, 1.15, 1, 1.1][Math.floor(Math.random() * 5)],
 }));
 
 type SphereProps = {
