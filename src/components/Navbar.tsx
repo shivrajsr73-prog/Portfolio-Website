@@ -6,38 +6,69 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import "./styles/Navbar.css";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
-export let smoother: ScrollSmoother;
+export let smoother: ScrollSmoother | undefined;
 
 const Navbar = () => {
   useEffect(() => {
-    smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.7,
-      speed: 1.7,
-      effects: true,
-      autoResize: true,
-      ignoreMobileResize: true,
-    });
+    const desktopQuery = window.matchMedia("(min-width: 1025px)");
+    const links = Array.from(
+      document.querySelectorAll(".header ul a")
+    ) as HTMLAnchorElement[];
 
-    smoother.scrollTop(0);
-    smoother.paused(true);
+    const handleLinkClick = (e: Event) => {
+      if (!desktopQuery.matches || !smoother) {
+        return;
+      }
 
-    let links = document.querySelectorAll(".header ul a");
-    links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
-      element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
-          e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
-        }
-      });
-    });
-    window.addEventListener("resize", () => {
+      e.preventDefault();
+      const elem = e.currentTarget as HTMLAnchorElement;
+      const section = elem.getAttribute("data-href");
+      if (section) {
+        smoother.scrollTo(section, true, "top top");
+      }
+    };
+
+    const setupSmoother = () => {
+      if (!desktopQuery.matches) {
+        smoother?.kill();
+        smoother = undefined;
+        ScrollTrigger.getAll().forEach((trigger) => trigger.refresh());
+        return;
+      }
+
+      if (!smoother) {
+        smoother = ScrollSmoother.create({
+          wrapper: "#smooth-wrapper",
+          content: "#smooth-content",
+          smooth: 1.7,
+          speed: 1.7,
+          effects: true,
+          autoResize: true,
+          ignoreMobileResize: true,
+        });
+      }
+
+      smoother.scrollTop(0);
+      smoother.paused(true);
       ScrollSmoother.refresh(true);
-    });
+    };
+
+    const handleResize = () => {
+      setupSmoother();
+    };
+
+    setupSmoother();
+    links.forEach((link) => link.addEventListener("click", handleLinkClick));
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      links.forEach((link) =>
+        link.removeEventListener("click", handleLinkClick)
+      );
+      window.removeEventListener("resize", handleResize);
+      smoother?.kill();
+      smoother = undefined;
+    };
   }, []);
   return (
     <>

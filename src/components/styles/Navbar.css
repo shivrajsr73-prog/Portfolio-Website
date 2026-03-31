@@ -3,6 +3,8 @@
   max-width: var(--cMaxWidth);
   width: var(--cWidth);
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
   padding: 20px 0px;
   margin-bottom: -100px;
   box-sizing: border-box;
@@ -48,11 +50,14 @@
 @media only screen and (min-width: 500px) {
   .header {
     padding: 20px 0px;
+    align-items: center;
   }
   .header ul {
     flex-direction: row;
     align-items: center;
     font-size: 14px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .header ul li {
     color: #eae5ec;
@@ -64,6 +69,17 @@
 @media only screen and (min-width: 900px) {
   .navbar-connect {
     display: block;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .header {
+    gap: 10px;
+  }
+  .header ul {
+    row-gap: 4px;
+  }
+  .navbar-title {
+    font-size: 13px;
   }
 }
 @media only screen and (min-width: 1200px) {

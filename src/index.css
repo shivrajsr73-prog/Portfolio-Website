@@ -32,7 +32,8 @@ h6 {
   font-family: "Geist", sans-serif;
 }
 body {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 a {
   color: inherit;
@@ -77,7 +78,7 @@ body {
 }
 .container1 {
   width: var(--cWidth);
-  height: var(--vh);
+  min-height: var(--vh);
   margin: auto;
   position: relative;
 }
@@ -94,7 +95,7 @@ body {
 .techstack {
   width: 100%;
   position: relative;
-  height: var(--vh);
+  min-height: var(--vh);
   margin: auto;
   margin-top: 50px;
   margin-bottom: -100px;
@@ -114,6 +115,11 @@ body {
 @media screen and (min-width: 768px) {
   body {
     --cWidth: 94%;
+  }
+}
+@media screen and (min-width: 1025px) {
+  body {
+    overflow: hidden;
   }
 }
 @media screen and (max-width: 900px) {
